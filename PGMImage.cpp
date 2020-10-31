@@ -10,7 +10,7 @@
 ostream &operator<<(ostream &os, const vector<vector<unsigned char> > &M) {
     for (unsigned long i = 0; i < M.size(); i++) {
         for (auto x:M[i]) {
-            os << setw(12) << x << setw(12);
+            os << setw(5) << (int)x << setw(5);
         }
         os << endl;
     }
@@ -118,13 +118,13 @@ void PGMImage::findConvexSubset() {
             if (pixels[i][j] > 0 && findSet[i][j] == 0) {
                 pointsQueue.push(pair<int, int>(i, j));         //new point for search
                 pointHead.push_back(pair<int, int>(i, j));         //add head point
+                findSet[x][y] = pixels[x][y];                      //add point to findSet
                 setLength.push_back(0);
             }
             last = setLength.size() - 1;
             while (!pointsQueue.empty()) {
                 x = pointsQueue.front().first;              // (x,y) coord
                 y = pointsQueue.front().second;
-                findSet[x][y] = pixels[x][y];               //add point to findSet
                 setLength[last]++;                          //increment size of current set
                 pointsQueue.pop();                          //remove front
                 pushNeighbors(x, y, pointsQueue);       //push neighbors
@@ -132,6 +132,9 @@ void PGMImage::findConvexSubset() {
         }// for(j)
     }//for(i)
     cout << "Number: " << pointHead.size() <<endl;
+    for (int i = 0; i<pointHead.size(); i++){
+        cout << "Conjunto No. " << i << " size: " << setLength[i] << endl;
+    }
 }
 
 /*
@@ -196,21 +199,25 @@ void PGMImage::paintLSubset(string filename) {
     int x, y, last;
 
     //paint largest
-    pointsQueue.push(pair<int, int>(pointHead[i_max].first, pointHead[i_max].second));
+    x = pointHead[i_max].first;
+    y = pointHead[i_max].second;
+    pixels[x][y] = findSet[x][y];               //paint initial point from largest set
+    pointsQueue.push(pair<int, int>(x, y));
     while (!pointsQueue.empty()) {
         x = pointsQueue.front().first;
         y = pointsQueue.front().second;
-        pixels[x][y] = findSet[x][y];               //paint points from largest set
         pointsQueue.pop();                          //remove painted point
         paintNeighbors(x, y, pointsQueue);       //check his neighbors
     }
 
     //paint smallest
-    pointsQueue.push(pair<int, int>(pointHead[i_min].first, pointHead[i_min].second));
+    x = pointHead[i_min].first;
+    y = pointHead[i_min].second;
+    pixels[x][y] = findSet[x][y];               //paint initial point from smalles set
+    pointsQueue.push(pair<int, int>(x, y));
     while (!pointsQueue.empty()) {
         x = pointsQueue.front().first;
         y = pointsQueue.front().second;
-        pixels[x][y] = findSet[x][y];               //paint points from smalles set
         pointsQueue.pop();                          //remove painted point
         paintNeighbors(x, y, pointsQueue);       //check his neighbors
     }
