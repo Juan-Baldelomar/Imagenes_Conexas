@@ -38,7 +38,7 @@ PGMImage::PGMImage(string filename) {
 
     //read header
     while (getline(file, line)) {
-        if (line.at(0) == '#')
+        if (line.at(0) == '#')                                  //ignore comment
             continue;
 
         if (!hasHeader) {
@@ -109,6 +109,11 @@ void PGMImage::showData() {
 }
 
 void PGMImage::findConvexSubset() {
+    if (!hasHeader){
+        cout << "ERROR: Img is corrupted" << endl;
+        return;
+    }
+
     findSet.assign(nRows, vector<unsigned char>(nCols, 0));
     queue<pair<int, int>> pointsQueue;
     int x, y, last;
@@ -178,6 +183,11 @@ void PGMImage::pushNeighbors(int x, int y, queue<pair<int, int>> &q) {
 }
 
 void PGMImage::paintLSubset(string filename) {
+    if (!hasHeader){
+        cout << "ERROR: Img corrupted " << endl;
+        return;
+    }
+
     int max = -1;
     int min = nRows * nCols;
     int i_max = 0, i_min = 0;
