@@ -18,8 +18,8 @@ void mapTry(){
 }
 
 int main() {
-    PGMImage pgmImage("Figures/fig3.pgm");
+    PGMImage pgmImage("Figures/fig5.pgm");
     pgmImage.findConvexSubset();
-    pgmImage.paintLSubset("Figures/fig3_ls.pgm");
+    pgmImage.paintLSubset("Figures/fig5_ls.pgm");
     return 0;
 }

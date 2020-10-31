@@ -97,7 +97,7 @@ void PGMImage::writeFile(string filename) {
             file << (unsigned int) pixels[i][j] << endl;
         }
     }
-    cout << "IMG writen succesful" << endl;
+    cout << "IMG writen successful" << endl;
     file.close();
 }
 
@@ -117,23 +117,27 @@ void PGMImage::findConvexSubset() {
         for (int j = 0; j < nCols; j++) {
             if (pixels[i][j] > 0 && findSet[i][j] == 0) {
                 pointsQueue.push(pair<int, int>(i, j));         //new point for search
-                pointHead.push_back(pair<int, int>(i, j));          //point head found
+                pointHead.push_back(pair<int, int>(i, j));         //add head point
                 setLength.push_back(0);
             }
             last = setLength.size() - 1;
             while (!pointsQueue.empty()) {
-                x = pointsQueue.front().first;
+                x = pointsQueue.front().first;              // (x,y) coord
                 y = pointsQueue.front().second;
-                setLength[last]++;
-                pointsQueue.pop();
-                pushNeighbors(x, y, pointsQueue);
-                //cout << x << " " << y << endl;
+                findSet[x][y] = pixels[x][y];               //add point to findSet
+                setLength[last]++;                          //increment size of current set
+                pointsQueue.pop();                          //remove front
+                pushNeighbors(x, y, pointsQueue);       //push neighbors
             }
         }// for(j)
     }//for(i)
     cout << "Number: " << pointHead.size() <<endl;
 }
 
+/*
+ * verify which neighbors are not yet in the found set
+ * if not in there, add them and push them to the queue
+ * */
 void PGMImage::pushNeighbors(int x, int y, queue<pair<int, int>> &q) {
 
     if (x - 1 >= 0 && y - 1 >= 0 && pixels[x - 1][y - 1] > 0 && findSet[x - 1][y - 1] == 0) {
@@ -185,7 +189,7 @@ void PGMImage::paintLSubset(string filename) {
             i_min = i;
         }
     }
-
+    // clean pixels to repaint
     pixels.assign(nRows, vector<unsigned char>(nCols, 0));
 
     queue<pair<int, int>> pointsQueue;
@@ -196,8 +200,9 @@ void PGMImage::paintLSubset(string filename) {
     while (!pointsQueue.empty()) {
         x = pointsQueue.front().first;
         y = pointsQueue.front().second;
-        pointsQueue.pop();
-        paintNeighbors(x, y, pointsQueue);
+        pixels[x][y] = findSet[x][y];               //paint points from largest set
+        pointsQueue.pop();                          //remove painted point
+        paintNeighbors(x, y, pointsQueue);       //check his neighbors
     }
 
     //paint smallest
@@ -205,13 +210,17 @@ void PGMImage::paintLSubset(string filename) {
     while (!pointsQueue.empty()) {
         x = pointsQueue.front().first;
         y = pointsQueue.front().second;
-        pointsQueue.pop();
-        paintNeighbors(x, y, pointsQueue);
+        pixels[x][y] = findSet[x][y];               //paint points from smalles set
+        pointsQueue.pop();                          //remove painted point
+        paintNeighbors(x, y, pointsQueue);       //check his neighbors
     }
-
-    writeFile(filename);
+    writeFile(filename);                            //write file
 }
 
+/*
+ * verify which neighbors are not yet in the paint set
+ * if not in there, add them and push them to the queue
+ * */
 void PGMImage::paintNeighbors(int x, int y, queue<pair<int, int>> &q) {
     if (x - 1 >= 0 && y - 1 >= 0 && findSet[x - 1][y - 1] > 0 && pixels[x - 1][y - 1] == 0) {
         q.push(pair<int, int>(x - 1, y - 1));
