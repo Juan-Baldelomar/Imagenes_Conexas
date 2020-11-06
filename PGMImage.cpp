@@ -120,10 +120,10 @@ void PGMImage::findConvexSubset() {
 
     for (int i = 0; i < nRows; i++) {
         for (int j = 0; j < nCols; j++) {
-            if (pixels[i][j] > 0 && findSet[i][j] == 0) {
+            if (pixels[i][j] > 127 && findSet[i][j] == 0) {
                 pointsQueue.push(pair<int, int>(i, j));         //new point for search
                 pointHead.push_back(pair<int, int>(i, j));         //add head point
-                findSet[i][j] = pixels[i][j];                      //add point to findSet
+                findSet[i][j] = 255;                      //add point to findSet
                 setLength.push_back(0);
             }
             last = setLength.size() - 1;
@@ -151,37 +151,37 @@ void PGMImage::printSubsets() {
  * */
 void PGMImage::pushNeighbors(int x, int y, queue<pair<int, int>> &q) {
 
-    if (x - 1 >= 0 && y - 1 >= 0 && pixels[x - 1][y - 1] > 0 && findSet[x - 1][y - 1] == 0) {
+    if (x - 1 >= 0 && y - 1 >= 0 && pixels[x - 1][y - 1] > 127 && findSet[x - 1][y - 1] == 0) {
         q.push(pair<int, int>(x - 1, y - 1));
-        findSet[x - 1][y - 1] = pixels[x - 1][y - 1];
+        findSet[x - 1][y - 1] = 255;
     }
-    if (x >= 0 && y - 1 >= 0 && pixels[x][y - 1] > 0 && findSet[x][y - 1] == 0) {
+    if (x >= 0 && y - 1 >= 0 && pixels[x][y - 1] > 127 && findSet[x][y - 1] == 0) {
         q.push(pair<int, int>(x, y - 1));
-        findSet[x][y - 1] = pixels[x][y - 1];
+        findSet[x][y - 1] = 255;
     }
-    if (x + 1 < nRows && y - 1 >= 0 && pixels[x + 1][y - 1] > 0 && findSet[x + 1][y - 1] == 0) {
+    if (x + 1 < nRows && y - 1 >= 0 && pixels[x + 1][y - 1] > 127 && findSet[x + 1][y - 1] == 0) {
         q.push(pair<int, int>(x + 1, y - 1));
-        findSet[x + 1][y - 1] = pixels[x + 1][y - 1];
+        findSet[x + 1][y - 1] = 255;
     }
-    if (x - 1 >= 0 && y >= 0 && pixels[x - 1][y] > 0 && findSet[x - 1][y] == 0) {
+    if (x - 1 >= 0 && y >= 0 && pixels[x - 1][y] > 127 && findSet[x - 1][y] == 0) {
         q.push(pair<int, int>(x - 1, y));
-        findSet[x - 1][y] = pixels[x - 1][y];
+        findSet[x - 1][y] = 255;
     }
-    if (x + 1 < nRows && y >= 0 && pixels[x + 1][y] > 0 && findSet[x + 1][y] == 0) {
+    if (x + 1 < nRows && y >= 0 && pixels[x + 1][y] > 127 && findSet[x + 1][y] == 0) {
         q.push(pair<int, int>(x + 1, y));
-        findSet[x + 1][y] = pixels[x + 1][y];
+        findSet[x + 1][y] = 255;
     }
-    if (x - 1 >= 0 && y + 1 < nCols && pixels[x - 1][y + 1] > 0 && findSet[x - 1][y + 1] == 0) {
+    if (x - 1 >= 0 && y + 1 < nCols && pixels[x - 1][y + 1] > 127 && findSet[x - 1][y + 1] == 0) {
         q.push(pair<int, int>(x - 1, y + 1));
-        findSet[x - 1][y + 1] = pixels[x - 1][y + 1];
+        findSet[x - 1][y + 1] = 255;
     }
-    if (x >= 0 && y + 1 < nCols && pixels[x][y + 1] > 0 && findSet[x][y + 1] == 0) {
+    if (x >= 0 && y + 1 < nCols && pixels[x][y + 1] > 127 && findSet[x][y + 1] == 0) {
         q.push(pair<int, int>(x, y + 1));
-        findSet[x][y + 1] = pixels[x][y + 1];
+        findSet[x][y + 1] = 255;
     }
-    if (x + 1 < nRows && y + 1 < nCols && pixels[x + 1][y + 1] > 0 && findSet[x + 1][y + 1] == 0) {
+    if (x + 1 < nRows && y + 1 < nCols && pixels[x + 1][y + 1] > 127 && findSet[x + 1][y + 1] == 0) {
         q.push(pair<int, int>(x + 1, y + 1));
-        findSet[x + 1][y + 1] = pixels[x + 1][y + 1];
+        findSet[x + 1][y + 1] = 255;
     }
 }
 
