@@ -31,6 +31,7 @@ public:
     void findConvexSubset();
     void paintLSubset(string filename);
     void paintNeighbors(int x, int y, queue<pair<int, int>> &q);
+    void printSubsets();
 
 };
 

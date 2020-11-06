@@ -123,7 +123,7 @@ void PGMImage::findConvexSubset() {
             if (pixels[i][j] > 0 && findSet[i][j] == 0) {
                 pointsQueue.push(pair<int, int>(i, j));         //new point for search
                 pointHead.push_back(pair<int, int>(i, j));         //add head point
-                findSet[x][y] = pixels[x][y];                      //add point to findSet
+                findSet[i][j] = pixels[i][j];                      //add point to findSet
                 setLength.push_back(0);
             }
             last = setLength.size() - 1;
@@ -136,8 +136,11 @@ void PGMImage::findConvexSubset() {
             }
         }// for(j)
     }//for(i)
-    cout << "Number: " << pointHead.size() <<endl;
-    for (int i = 0; i<pointHead.size(); i++){
+}
+
+void PGMImage::printSubsets() {
+    cout << "Number of Subsets: " << pointHead.size() <<endl;
+    for (unsigned long i = 0; i<pointHead.size(); i++){
         cout << "Conjunto No. " << i << " size: " << setLength[i] << endl;
     }
 }
@@ -192,7 +195,7 @@ void PGMImage::paintLSubset(string filename) {
     int min = nRows * nCols;
     int i_max = 0, i_min = 0;
 
-    for (int i = 0; i < setLength.size(); i++) {
+    for (unsigned long i = 0; i < setLength.size(); i++) {
         if (max < setLength[i]) {
             max = setLength[i];
             i_max = i;
@@ -206,7 +209,7 @@ void PGMImage::paintLSubset(string filename) {
     pixels.assign(nRows, vector<unsigned char>(nCols, 0));
 
     queue<pair<int, int>> pointsQueue;
-    int x, y, last;
+    int x, y;
 
     //paint largest
     x = pointHead[i_max].first;
