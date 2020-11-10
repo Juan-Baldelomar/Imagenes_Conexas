@@ -2,7 +2,6 @@
 // Created by juan on 30/10/20.
 //
 #include <bits/stdc++.h>
-
 #include "PGMImage.h"
 #include <algorithm>
 
@@ -22,14 +21,6 @@ ostream &operator<<(ostream &os, const vector<unsigned char> &V) {
         os << x << " ";
     os << endl;
     return os;
-}
-
-int crossProduct(pair<int, int> a, pair<int, int> b, pair<int, int> c) {            //finds the place of c from ab vector
-    int y1 = a.second - b.second;
-    int y2 = a.second - c.second;
-    int x1 = a.first - b.first;
-    int x2 = a.first - c.first;
-    return y2*x1 - y1*x2;          //if result < 0, c in the left, > 0, c in the right, = 0, a,b,c are collinear
 }
 
 int distance(pair<int, int> a, pair<int, int> b, pair<int, int> c) {
@@ -342,7 +333,7 @@ void PGMImage::findConvexHull() {
             hullPoints.push_back(p);
         }
         collinearPoints.clear();
-        cout << "point i: " << endPoint.first << " point j: " << endPoint.second << endl;
+        //cout << "point i: " << endPoint.first << " point j: " << endPoint.second << endl;
         if (endPoint == headPoint)
             break;
 
@@ -354,79 +345,53 @@ void PGMImage::findConvexHull() {
 void PGMImage::drawConvexHull() {
     int s = hullPoints.size();
     int i = 0;
+
     while(i%s != 0 || i<s){
-        drawLine(hullPoints[i%s], hullPoints[(i+1)%s]);
+        drawLine(hullPoints[i % s], hullPoints[(i + 1) % s]);
         i++;
     }
 
-    /*int n = pixels.size();
+    int n = pixels.size();
     int m = pixels[0].size();
+
+    //transform to pgm matrix
     for (int i = 0; i<n; i++){
         for (int j = 0; j<m; j++){
             pixels[i][j] = transpose[j][i];
         }
-    }*/
+    }
 }
 
 void PGMImage::drawLine(pair<int, int> &p1, pair<int, int> &p2) {
-    int i_max = p1.first > p2.first? p1.first : p2.first;
-    int j_max = p1.second > p2.second? p1.second : p2.second;
-    int i_min = p1.first < p2.first? p1.first : p2.first;
-    int j_min = p1.second < p2.second? p1.second : p2.second;
+    int n = nCols*2;
+    int x_1 = p1.first, x_2 = p2.first;
+    int y_1 = p1.second, y_2 = p2.second;
 
-    int step_x = p1.first < p2.first? 1 : -1;
-    int step_y = p1.second < p2.second? 1: -1;
+    // variables to graph
+    int a = x_1 < x_2 ? x_1 : x_2;
+    int b = x_1 > x_2 ? x_1 : x_2;
+    int fmin = y_1 < y_2 ? y_1 : y_2;
+    int fmax = y_1 > y_2 ? y_1 : y_2;
 
-    int delta_x = abs(p1.first - p2.first);
-    int delta_y = abs(p1.second - p2.second);
+    // variables of f(x) = mx + p0
+    double m = (y_2-y_1)/double(x_2 - x_1);
+    double p0 = y_2 - m*x_2;
 
-    int sign = 0, rate = 0;
+    // delta_x
+    double delta = (b-a)/(double)n;
 
-    if (delta_x > delta_y){
-        sign = 1;
-        rate = round((delta_x + 1) / (double)(delta_y + 1));
-    }else if (delta_x < delta_y){
-        sign = -1;
-        rate = round((delta_y + 1)/ (double)(delta_x + 1));
-    }
-    int i_start = p1.first, j_start = p1.second;
-    int rate_step = 0;
+    if (b != a) {
+        for (int i = 0; i < n; i++) {
+            double x = (i*delta) + a;
+            double y = m * x + p0;
+            int x_p = x;
+            int y_p = y;
 
-    if (sign == 1){
-        while(i_start != p2.first){
-            pixels[i_start][j_start] = 255;
-            if (rate_step == rate && j_start>= j_min && j_start<= j_max){
-                j_start += step_y;
-                rate_step = 0;
-
-                if (j_start<j_min || j_start> j_max)
-                    j_start += -step_y;
-                continue;
-            }
-            i_start += step_x;
-            rate_step++;
+            transpose[x_p][y_p] = 255;
         }
-        pixels[i_start][j_start] = 255;
-    }else if (sign == -1){
-        while(j_start != p2.second){
-            pixels[i_start][j_start] = 255;
-            if (rate_step == rate && i_start>=i_min && i_start<= i_max){
-                i_start += step_x;
-                rate_step = 0;
-
-                if (i_start<i_min || i_start> i_max)
-                    i_start += -step_x;
-                continue;
-            }
-            j_start += step_y;
-            rate_step++;
-        }
-        pixels[i_start][j_start] = 255;
     }else{
-        while (i_start != p2.first){
-            pixels[i_start][j_start] = 255;
-            i_start += step_x;
-            j_start += step_y;
+        for (int i = fmin; i<fmax; i++){
+            transpose[a][i] = 255;
         }
     }
 }
@@ -435,18 +400,24 @@ void PGMImage::findInitialHullPoint(pair<int, int> &hullPoint, vector<pair<int, 
     int n = pixels.size();
     int m = pixels[0].size();
 
-   /* for (int i = 0; i<n; i++){
+    // transform to pixels matrix (how we see the image is actually the transposition of how it is stored)
+    for (int i = 0; i<n; i++){
         for (int j = 0; j<m; j++){
             transpose[j][i] = pixels[i][j];
         }
-    }*/
+    }
 
+    // find non null points to search
     for (int  i = 0; i<m; i++){
         for (int j = 0; j<n; j++){
-            if (pixels[i][j] > 127)
+            if (transpose[i][j] > 127){
                 points.push_back(pair<int, int>(i, j));
+                transpose[i][j] = 255;
+            }
         }
     }
+
+    // find point most to the left
     hullPoint = points[0];
     for (auto p:points){
         if (p.first < hullPoint.first)
@@ -468,7 +439,3 @@ short PGMImage::onLeft(pair<int, int>&point, pair<int, int> &hullPoint, pair<int
     return sign;
 }
 
-/*
-bool operator==(const pair<int, int> &p1, const pair<int, int> &p2){
-    return p1.first == p2.first && p1.second == p2.second;
-}*/

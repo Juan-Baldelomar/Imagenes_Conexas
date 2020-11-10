@@ -33,7 +33,7 @@ void ejercicio1(int numArgs, char** args){
 
 void ejercicio2(int numArgs, char** args){
     //leer imagen
-    PGMImage pgmImage("Figures/fig5.pgm");
+    PGMImage pgmImage("Figures/fig4.pgm");
 
     //clock start
     high_resolution_clock::time_point start = high_resolution_clock::now();
