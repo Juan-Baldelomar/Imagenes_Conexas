@@ -33,7 +33,7 @@ void ejercicio1(int numArgs, char** args){
 
 void ejercicio2(int numArgs, char** args){
     //leer imagen
-    PGMImage pgmImage("Figures/fig4.pgm");
+    PGMImage pgmImage(args[1]);
 
     //clock start
     high_resolution_clock::time_point start = high_resolution_clock::now();
@@ -51,11 +51,10 @@ void ejercicio2(int numArgs, char** args){
 
     //generate output img
     pgmImage.drawConvexHull();
-    pgmImage.writeFile("Figures/output_fixg.pgm");
-    /*if (numArgs==3)
-        pgmImage.paintLSubset(args[2]);
+    if (numArgs==3)
+        pgmImage.writeFile(args[2]);
     else
-        pgmImage.paintLSubset("Figures/output.pgm");*/
+        pgmImage.writeFile("Figures/output_fixg.pgm");
 }
 
 int main(int numArgs, char** args) {
